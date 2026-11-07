@@ -1,0 +1,119 @@
+{
+  "_doc": "Reusable LTX-2.5 prompt fragments for anime I2V. A shot prompt = style + subject/scene (from the keyframe) + motion + camera + audio. Status per fragment: 'untested' | 'works' | 'weak' | 'fails' (updated from Phase 1 tests in docs/phase1.md). Tested 2026-11-07 at 960x544, 8 s, distilled, I2V from qwen21_8s keyframes (renders/exp/library_camera_motion_audio/).",
+  "style": {
+    "default": "Anime style, 2D cel animation, hand-drawn Japanese TV anime look, clean line art, flat cel shading.",
+    "limited_animation": "Anime style, 2D cel animation animated on twos, limited animation with held poses, clean line art, flat cel shading."
+  },
+  "camera": {
+    "static": {
+      "text": "Static camera, locked-off shot.",
+      "status": "weak",
+      "tested": "still drifts forward; LTX defaults to a slow push"
+    },
+    "push_in": {
+      "text": "Slow push-in camera toward the subject.",
+      "status": "works"
+    },
+    "pull_out": {
+      "text": "Slow pull-out camera revealing more of the scene.",
+      "status": "fails",
+      "tested": "no pull-out; generic drift"
+    },
+    "pan_left": {
+      "text": "Slow pan left across the scene.",
+      "status": "works"
+    },
+    "pan_right": {
+      "text": "Slow pan right across the scene.",
+      "status": "weak",
+      "tested": "small movement"
+    },
+    "tilt_up": {
+      "text": "Slow tilt up from the ground to the sky.",
+      "status": "works"
+    },
+    "tracking_side": {
+      "text": "Camera tracks sideways alongside the subject at the same speed.",
+      "status": "weak",
+      "tested": "needs a moving subject; little camera motion on a static scene"
+    },
+    "orbit": {
+      "text": "Camera slowly orbits around the subject.",
+      "status": "fails",
+      "tested": "generic drift, no orbit"
+    }
+  },
+  "motion": {
+    "idle": {
+      "text": "The character breathes gently and blinks, small natural idle movement.",
+      "status": "works"
+    },
+    "wind_hair_cloth": {
+      "text": "Wind blows the character's hair and clothes.",
+      "status": "works"
+    },
+    "head_turn": {
+      "text": "The character slowly turns their head toward the camera.",
+      "status": "works",
+      "tested": "clean at 8 s"
+    },
+    "walk": {
+      "text": "The character walks forward at a calm pace.",
+      "status": "fails",
+      "tested": "from an upper-body keyframe the face disintegrates; use a wider (full-body) keyframe"
+    },
+    "run_speedlines": {
+      "text": "The character sprints, anime speed lines streak across the background.",
+      "status": "works",
+      "tested": "speed lines actually appear"
+    },
+    "ambient_env": {
+      "text": "Clouds drift slowly, leaves sway, light flickers gently; no people.",
+      "status": "works"
+    }
+  },
+  "audio": {
+    "ambient_city": {
+      "text": "Sound of distant city traffic and wind.",
+      "status": "weak",
+      "tested": "nearly silent (-51 dB mean)"
+    },
+    "ambient_nature": {
+      "text": "Sound of gentle waves, cicadas and birds.",
+      "status": "works",
+      "tested": "-39 dB"
+    },
+    "rain": {
+      "text": "Sound of heavy rain and splashing water.",
+      "status": "works",
+      "tested": "-32 dB"
+    },
+    "dialogue": {
+      "text": "The character says softly, \"<LINE>\"",
+      "status": "untested",
+      "note": "Keep lines short (< ~8 words per 8 s clip). Put the spoken words in double quotes.",
+      "tested": "loud (-27.5 dB) but intelligibility/lip-sync not yet verified (needs ASR or listening)"
+    },
+    "sfx_door": {
+      "text": "A door slams shut with a loud bang.",
+      "status": "works",
+      "tested": "-29 dB; content not verified by ear"
+    },
+    "silence": {
+      "text": "Quiet room tone, no music.",
+      "status": "works",
+      "tested": "-47 dB, quiet"
+    }
+  },
+  "negative": {
+    "default": "photorealistic, 3D render, CGI, live action, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
+  },
+  "rules_of_thumb": [
+    "Use I2V from a keyframe; T2V drifts off-style.",
+    "Give big motions room: 8 s for push-in + head turn; 5 s only for low-motion shots.",
+    "Prefer 1280x720 for faces; 960x544 is fine for environments and drafts.",
+    "One camera move per shot; one main action per character.",
+    "LTX drifts forward by default; for a truly static shot, freeze/trim in edit or accept a slow push.",
+    "Walking/large body motion needs a wide keyframe; never animate a walk from an upper-body framing."
+  ]
+}

@@ -1,0 +1,23 @@
+# secrets (COMFY_USER/COMFY_PASS etc.)
+.env
+.env.*
+!.env.example
+
+# generated outputs (videos, keyframes, logs, reports)
+renders/
+*.log
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# model weights / caches (live on the Runpod network volume, never in git)
+*.safetensors
+*.ckpt
+hf-cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db

@@ -1,0 +1,35 @@
+{
+  "_doc": "Phase 1 keyframe-model comparison. Each shot has a Danbooru-style 'tags' prompt (SDXL anime / Anima) and a 'natural' prompt (Qwen-Image). Original characters only. 16:9 frames for I2V. 'motion' is the LTX video prompt (scene + motion + camera + audio) used for both T2V and I2V.",
+  "width": 1344,
+  "height": 768,
+  "seeds": [
+    1001,
+    2002
+  ],
+  "shots": [
+    {
+      "id": "closeup",
+      "tags": "1girl, solo, short hair, silver hair, blue eyes, red scarf, school uniform, upper body, looking at viewer, slight smile, wind, hair blowing, rooftop, sunset, orange sky, city skyline, backlighting, lens flare",
+      "natural": "A teenage girl with short silver hair, blue eyes and a long red scarf stands on a school rooftop at sunset, upper-body shot, looking at the viewer with a slight smile. Wind blows her hair and scarf. Orange sky and a city skyline behind her, warm backlight.",
+      "motion": "Anime style, 2D cel animation. The silver-haired girl on the sunset rooftop: wind blows her hair and red scarf, she blinks, then turns her head toward the camera and says softly, \"We made it.\" Slow push-in camera. Sound of wind and distant city traffic."
+    },
+    {
+      "id": "action_wide",
+      "tags": "1boy, solo, black hair, messy hair, hoodie, running, motion blur, full body, from side, night, city, rain, neon lights, wet street, reflections, puddle, dynamic pose, wide shot",
+      "natural": "Wide side-on shot of a teenage boy with messy black hair and a grey hoodie sprinting down a rain-soaked city street at night. Neon signs reflect in puddles on the wet asphalt, rain streaks, strong sense of speed and motion.",
+      "motion": "Anime style, 2D cel animation. The black-haired boy sprints through the rainy neon street at night, legs and hoodie in motion, splashing through puddles, rain streaking past. Camera tracks sideways with him. Sound of heavy rain, splashing footsteps and his breathing."
+    },
+    {
+      "id": "environment",
+      "tags": "no humans, scenery, seaside town, morning, ocean, harbor, small houses, hill, power lines, blue sky, clouds, summer, sunlight, wide shot, establishing shot",
+      "natural": "Establishing wide shot of a quiet seaside town on a summer morning: small houses on a hillside above a harbor, power lines crossing the frame, calm blue ocean, bright sunlight and tall white clouds. No people.",
+      "motion": "Anime style, 2D cel animation. Quiet seaside town on a summer morning: clouds drift slowly, sunlight sparkles on the ocean, a seagull glides across the sky. Slow pan right across the town. Sound of gentle waves, cicadas and a distant seagull."
+    },
+    {
+      "id": "two_shot",
+      "tags": "1girl, 1boy, sitting, side by side, train interior, bench, window, evening, sunset light, talking, looking at another, silver hair, red scarf, black hair, hoodie, medium shot",
+      "natural": "Medium shot inside a nearly empty commuter train at dusk. A silver-haired girl in a red scarf and a black-haired boy in a grey hoodie sit side by side on the bench, turned toward each other, talking. Golden evening light streams through the windows.",
+      "motion": "Anime style, 2D cel animation. Inside the evening train, the silver-haired girl and the black-haired boy sit side by side. The girl laughs softly and says, \"You really didn't know?\" The boy looks away, embarrassed. Golden light flickers through the windows as the train moves. Sound of train wheels on rails."
+    }
+  ]
+}

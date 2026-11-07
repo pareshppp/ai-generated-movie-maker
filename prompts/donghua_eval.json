@@ -1,0 +1,50 @@
+{
+  "_doc": "Phase 1b style evaluation (xianxia). Same 5 original shots rendered in each style in 'styles' (donghua = 2.5D/3D Chinese CG animation; photoreal = live-action C-drama look) to compare looks with identical designs. 'natural' = keyframe prompt (Qwen-Image), 'motion' = LTX prompt incl. dialogue/SFX. Runners prepend the style prefixes and use the style negatives.",
+  "width": 1344,
+  "height": 768,
+  "seeds": [
+    1001,
+    2002
+  ],
+  "shots": [
+    {
+      "id": "hero_portrait",
+      "natural": "Medium shot of a handsome young cultivator with long black hair tied in a high topknot, wearing flowing black robes with gold dragon embroidery, a faint confident smile. A glowing purple energy orb hovers above his raised left palm. Behind him, white jade palaces float among clouds under a bright blue sky.",
+      "motion": "The young cultivator's black and gold robes and long hair flutter in the wind, the purple energy orb in his palm pulses and swirls with light. He looks at the camera and says calmly, \"From today, no one bullies this sect.\" Slow push-in. Sound of wind and a deep magical hum."
+    },
+    {
+      "id": "courtyard_crowd",
+      "natural": "Wide shot of a grand sect courtyard paved with white jade at dawn, dozens of disciples in pale grey robes standing in neat rows facing a long marble staircase that leads up to an ornate red-and-gold palace hall. Morning mist drifts between the rows, pine trees and mountain peaks in the background.",
+      "motion": "Morning mist drifts slowly across the courtyard, the disciples' robes sway, a few disciples turn their heads and whisper to each other. Slow push-in toward the palace hall. Sound of a distant temple bell and murmuring voices."
+    },
+    {
+      "id": "vfx_powerup",
+      "natural": "A young sect sweeper in a plain patched grey robe holding a bamboo broom stands in a stone courtyard at night. A blazing golden aura erupts around him and a translucent dragon made of golden light coils in the air above his head. Sparks and glowing particles fill the air, onlookers in the background recoil in shock.",
+      "motion": "The golden aura around the sweeper flares brighter and ripples outward, the dragon of golden light circles above him and roars, glowing particles swirl, his robe and hair whip in the energy wind. Static camera. Sound of a powerful dragon roar and crackling energy."
+    },
+    {
+      "id": "palace_establishing",
+      "natural": "Epic establishing shot of a cluster of floating mountains with ornate Chinese palaces and pagodas on their peaks, long waterfalls pouring off their edges into a sea of clouds, white cranes flying between them, golden sunlight breaking through the clouds.",
+      "motion": "Clouds drift slowly beneath the floating mountains, waterfalls pour into the sea of clouds, a flock of white cranes flies across the frame. Slow pan left. Sound of wind, distant waterfalls and crane calls."
+    },
+    {
+      "id": "dialogue_two_shot",
+      "natural": "Medium two-shot inside an elegant wooden pavilion with silk curtains. An old sect elder with a long white beard and white-and-blue robes sits on the left; a young female disciple in lavender silk robes with hair ornaments stands on the right, facing him respectfully. Soft afternoon light, cherry blossom petals drifting outside.",
+      "motion": "The young female disciple bows slightly and says urgently, \"Master, the sweeper boy is not ordinary.\" The old elder strokes his white beard and narrows his eyes thoughtfully. Petals drift past the pavilion. Static camera. Quiet pavilion ambience."
+    }
+  ],
+  "styles": {
+    "donghua": {
+      "keyframe_prefix": "Chinese 3D donghua animation style, semi-realistic CG render, xianxia fantasy, cinematic lighting, highly detailed ornate costumes, glowing magical effects. ",
+      "keyframe_negative": "2D flat anime, cel shading, sketch, cartoon, photograph, live action, blurry, low quality, deformed hands, watermark, text",
+      "ltx_prefix": "Chinese 3D animated donghua, semi-realistic CG animation, cinematic xianxia fantasy. ",
+      "ltx_negative": "2D, flat cel shading, sketch, cartoon, photograph, live action, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
+    },
+    "photoreal": {
+      "keyframe_prefix": "Photorealistic cinematic film still from a live-action Chinese historical fantasy drama, real human actors, natural skin texture, realistic fabric and hair, 35mm lens, shallow depth of field, cinematic color grading, believable VFX lighting. ",
+      "keyframe_negative": "anime, cartoon, 3D render, CGI, video game, illustration, painting, doll-like porcelain skin, plastic, blurry, low quality, deformed hands, watermark, text",
+      "ltx_prefix": "Photorealistic cinematic live-action footage from a Chinese historical fantasy film, real actors, natural motion, film grain. ",
+      "ltx_negative": "anime, cartoon, 3D render, CGI look, video game, illustration, plastic skin, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
+    }
+  }
+}
