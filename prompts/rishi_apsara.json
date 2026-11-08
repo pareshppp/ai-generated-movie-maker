@@ -1,0 +1,87 @@
+{
+  "_doc": "Story keyframes: 'The Rishi and the Apsara' (ancient Indian epic). A young rishi's tapasya to Shiva blazes as mystical fire on an ice-capped Himalayan peak; Indra, threatened, sends an apsara to seduce him and break it; the rishi wakes in fury. Character descriptions are repeated verbatim in every shot via {name} (no character LoRAs yet). 'natural' = keyframe prompt (Qwen-Image), 'motion' = LTX prompt for the later I2V pass, 'negative_extra' = per-shot negative additions. v2 (2026-11-08): realistic adult faces (no cartoon), Indra/apsara fair-skinned north-western (Sindh/Afghan/Persian) features, apsara as seductress, rishi on a snowy Himalayan peak, angry awakening. Run: python -m mm.keyframes styles --prompts prompts/rishi_apsara.json --out renders/keyframes_story/rishi_apsara_v2",
+  "characters": {
+    "rishi": "a young rishi of about twenty with lean athletic build and warm brown skin, long dark matted hair piled in a topknot, a short dark beard, three horizontal lines of white sacred ash across his forehead, a rudraksha bead necklace, bare chest lightly smeared with ash, wearing a simple saffron dhoti",
+    "indra": "Indra, king of the devas, a regal man in his thirties with fair skin, sharp aquiline nose, high cheekbones, light hazel eyes and a neatly trimmed black beard, with the features of the ancient north-west frontier of India and Persia, wearing a tall ornate golden crown, golden armor and jewelled armlets, a flowing royal blue silk cape, holding a golden thunderbolt vajra",
+    "apsara": "a breathtakingly beautiful celestial apsara, an adult woman in her twenties with fair luminous skin, almond-shaped light hazel-green eyes lined with kohl, a sharp nose and full lips, with the features of the ancient north-west frontier of India and Persia, long wavy dark hair in a loose braid woven with white jasmine flowers, wearing a fitted emerald green and gold silk choli that leaves her midriff bare, a low-slung pleated silk dance skirt, a sheer gold-edged dupatta, gold jewelry on her waist, arms and forehead, red alta patterns on her palms and feet, small bells on her ankles"
+  },
+  "width": 1344,
+  "height": 768,
+  "seeds": [
+    1001,
+    2002
+  ],
+  "shots": [
+    {
+      "id": "01_himalaya_establishing",
+      "natural": "Epic establishing shot of the high Himalayas at dawn, a vast range of jagged ice-capped peaks glowing pink and gold above a sea of clouds. From the snowy summit of one lonely peak a towering column of golden-orange mystical fire rises straight into the sky, lighting the snow and mist around it. A completely deserted wilderness.",
+      "motion": "The column of golden mystical fire swirls and pulses upward into the sky, wind blows snow off the ridges, clouds drift slowly below the peaks. Slow push-in toward the burning summit. Sound of howling wind and a deep resonant Om.",
+      "negative_extra": "people, person, figures, crowd, woman, man"
+    },
+    {
+      "id": "02_rishi_tapas",
+      "natural": "Medium wide shot on a snowy ledge near the summit of an ice-capped Himalayan mountain, jagged white peaks and a sea of clouds behind. {rishi} sits cross-legged in lotus pose on a flat rock cleared of snow, eyes closed, hands resting in meditation mudra on his knees. A small black stone Shiva lingam decorated with bilva leaves and marigolds stands before him. A ring of golden-orange mystical flames encircles him without burning him, melting the snow at its edge, glowing sparks rise into the cold air.",
+      "motion": "The mystical flames around the rishi swirl and rise higher, steam curls where they meet the snow, sparks drift upward, snow flurries blow past. He sits perfectly still, lips softly moving as he chants, \"Om Namah Shivaya.\" Slow orbit around him. Sound of wind, crackling fire and low chanting.",
+      "negative_extra": "forest, river, crowd, other people"
+    },
+    {
+      "id": "03_rishi_closeup",
+      "natural": "Close-up portrait of {rishi}, eyes closed in deep meditation, a serene focused expression. Golden firelight flickers across his face, a few snowflakes melt as they fall into the heat, glowing embers float in front of him, blurred snowy mountain peaks and flames in the background.",
+      "motion": "Firelight flickers across the rishi's calm face, snowflakes and embers drift past, his lips move silently in prayer. Very slow push-in. Sound of wind, crackling fire and a deep hum.",
+      "negative_extra": "forest, crowd, other people"
+    },
+    {
+      "id": "04_svarga_trembles",
+      "natural": "Wide shot of Svarga, the heavenly city of the devas: golden palaces with tall carved temple spires stand on enormous white clouds. The column of golden-orange mystical fire from the earth below pierces up through the clouds, making the palaces glow orange, celestial attendants on the terraces look down in alarm.",
+      "motion": "The fire column surges upward through the clouds, the golden palaces shake slightly and the clouds churn, celestial attendants step back in alarm. Slow tilt up. Sound of a rumbling roar and wind."
+    },
+    {
+      "id": "05_indra_throne",
+      "natural": "Medium shot of {indra} seated on a magnificent jewelled golden throne in a vast celestial court with carved pillars and floating lotus lamps. He leans forward with a troubled, angry expression, gripping the vajra. In front of him a shimmering circular vision in the air shows a young ascetic meditating inside golden fire on a snowy mountain peak. A great white elephant stands in the background.",
+      "motion": "Indra frowns and tightens his grip on the vajra, the vision of the meditating rishi shimmers in the air before him. He says in a deep, cold voice, \"His tapas will shake my throne.\" Slow push-in. Sound of thunder rumbling in the distance."
+    },
+    {
+      "id": "06_indra_commands_apsara",
+      "natural": "Medium two-shot in the golden celestial court: {indra} stands on the left pointing downward toward the earth with his vajra; on the right {apsara} stands close to him with one hand on her hip, head tilted, a sly confident seductive smile and a smouldering half-lidded gaze. Soft golden light, floating lotus lamps and drifting flower petals.",
+      "motion": "Indra points downward and commands, \"Go. Break his tapasya.\" The apsara smiles slowly, runs a finger along her dupatta and replies in a low, teasing voice, \"No man has ever resisted me, my lord.\" Petals drift through the court. Static camera. Soft court ambience and gentle bells."
+    },
+    {
+      "id": "07_apsara_descends",
+      "natural": "{apsara} floating in mid-air high in the sky, descending gently from the clouds on a soft beam of moonlight, her body arched gracefully with her feet off the ground, her sheer dupatta and jasmine braid flowing upward above her, a trail of flower petals and glowing particles behind her. Far below her, on the snowy summit of an ice-capped Himalayan peak, a tiny ring of golden fire burns.",
+      "motion": "The apsara drifts slowly downward through the night sky, her silk dupatta and braid flowing upward, petals and sparkles trailing behind her. Slow tilt down following her. Sound of tinkling ankle bells and soft wind.",
+      "negative_extra": "standing on ground, dancing on ground, campfire, forest floor, crowd"
+    },
+    {
+      "id": "08_apsara_dance_wide",
+      "natural": "Wide shot on the snowy summit of an ice-capped Himalayan mountain at dusk, where her magic has made the snow bloom into a carpet of red palash flowers, yellow mustard blossoms and flowering ashoka trees, with butterflies and petals swirling in the cold air. In the foreground {apsara} dances sensuously with swaying hips and arched back, looking back over her shoulder with a seductive gaze. In the background {rishi} sits meditating in lotus pose inside a ring of golden mystical flames.",
+      "motion": "The apsara dances sensuously, swaying her hips and spinning so her skirt and dupatta flare, her hands flowing through mudras, ankle bells ringing. Petals swirl around her, the rishi's flames flicker behind her. Slow lateral tracking shot. Sound of veena music, ankle bells and wind.",
+      "negative_extra": "cherry blossoms, sakura, pink blossom trees, forest, river, crowd, other people"
+    },
+    {
+      "id": "09_apsara_dance_closeup",
+      "natural": "Medium close-up of {apsara} mid-dance on a snowy Himalayan summit, her body turned sideways with her bare midriff and curves accentuated, one hand lifting her sheer dupatta across her lips, a smouldering seductive gaze directly at the viewer. Warm sunset light, red palash petals and snowflakes drifting, blurred snowy peaks and golden firelight behind her.",
+      "motion": "The apsara slowly lowers the dupatta from her lips with a slow seductive smile, her eyes locked on the viewer, hips swaying, jasmine braid swinging. She whispers, \"Open your eyes, rishi.\" Slow push-in. Soft veena music and ankle bells.",
+      "negative_extra": "crowd, audience, people in background, temple ruins, ruins, buildings"
+    },
+    {
+      "id": "10_rishi_eyes_open",
+      "natural": "Close-up of {rishi} with his eyes snapped wide open in blazing fury, brows furrowed, jaw clenched, teeth bared, veins standing out on his neck, his eyes glowing with fiery light. The golden mystical flames around him flare up violently into angry red-orange fire, a few red flower petals burn to ash in the air. Behind him, blurred ice-capped Himalayan peaks under a dark stormy dusk sky.",
+      "motion": "The rishi's eyes snap open, burning with rage, he bares his teeth and his chest heaves, the flames around him erupt upward in a roaring red blaze, snow and petals whirl in the blast. He roars, \"Who dares disturb my tapas?\" Fast push-in. Sound of a roaring fire, thunder and wind.",
+      "negative_extra": "calm, smiling, crowd, other people, buildings, temple"
+    }
+  ],
+  "styles": {
+    "epic_cg": {
+      "keyframe_prefix": "High-end photorealistic 3D CG animation like a AAA cinematic trailer, realistic adult human proportions and faces, detailed skin pores, ancient Indian mythological epic, Vedic era, cinematic lighting, highly detailed ornate Indian costumes and jewelry, glowing divine magical effects. ",
+      "keyframe_negative": "cartoon, Pixar, Disney, stylized, chibi, oversized eyes, big eyes, doll-like face, childlike face, toy, Chinese clothing, hanfu, East Asian architecture, pagoda, 2D flat anime, cel shading, sketch, photograph, live action, Bollywood poster, nudity, nsfw, blurry, low quality, deformed hands, extra fingers, watermark, text",
+      "ltx_prefix": "High-end realistic 3D CG animation, cinematic Indian mythological epic. ",
+      "ltx_negative": "cartoon, Pixar, stylized, 2D, flat cel shading, sketch, photograph, live action, nudity, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
+    },
+    "photoreal": {
+      "keyframe_prefix": "Photorealistic cinematic film still from a big-budget live-action ancient Indian mythological epic, real actors, natural skin texture, realistic silk and jewelry, 35mm lens, shallow depth of field, cinematic color grading, believable VFX lighting. ",
+      "keyframe_negative": "Chinese clothing, hanfu, East Asian architecture, anime, cartoon, 3D render, CGI, video game, illustration, painting, plastic skin, Bollywood poster, nudity, nsfw, blurry, low quality, deformed hands, extra fingers, watermark, text",
+      "ltx_prefix": "Photorealistic cinematic live-action footage from an ancient Indian mythological epic film, real actors, natural motion, film grain. ",
+      "ltx_negative": "anime, cartoon, 3D render, CGI look, video game, illustration, plastic skin, nudity, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
+    }
+  }
+}

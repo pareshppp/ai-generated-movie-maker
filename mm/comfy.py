@@ -22,7 +22,7 @@ import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_URL = "https://sbydop2vxljwda-8188.proxy.runpod.net"
+DEFAULT_URL = "https://qxo2nouo34ye5y-8188.proxy.runpod.net"  # pod recreated per session: update this (runpod.md §3)
 
 
 def load_dotenv(path: Path = ROOT / ".env") -> None:

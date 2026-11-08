@@ -186,6 +186,11 @@ def style_variants(model_key: str, cfg: dict, styles: list[str]) -> list[ModelSp
 
 def compare(models: list[ModelSpec], shot_ids: list[str] | None, out_dir: Path, prompts: Path) -> None:
     cfg = json.loads(prompts.read_text())
+    chars = cfg.get("characters", {})     # optional {name: description}; shots reference them as {name}
+    for s in cfg["shots"]:
+        for k in ("natural", "motion"):
+            if k in s:
+                s[k] = s[k].format(**chars) if chars else s[k]
     shots = [s for s in cfg["shots"] if not shot_ids or s["id"] in shot_ids]
     out_dir.mkdir(parents=True, exist_ok=True)
     c = ComfyClient()
@@ -194,7 +199,11 @@ def compare(models: list[ModelSpec], shot_ids: list[str] | None, out_dir: Path, 
         for shot in shots:
             for seed in cfg["seeds"]:
                 prompt = make_prompt(m, shot)
-                g = build_graph(m, prompt, cfg["width"], cfg["height"], seed, f"kf/{m.key}/{shot['id']}_s{seed}")
+                if shot.get("negative_extra"):    # per-shot negative additions (e.g. "people, crowd")
+                    m_shot = replace(m, negative=f"{m.negative}, {shot['negative_extra']}")
+                else:
+                    m_shot = m
+                g = build_graph(m_shot, prompt, cfg["width"], cfg["height"], seed, f"kf/{m.key}/{shot['id']}_s{seed}")
                 t0 = time.time()
                 row = {"model": m.key, "shot": shot["id"], "seed": seed, "steps": m.steps, "cfg": m.cfg}
                 try:
