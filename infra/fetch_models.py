@@ -2,7 +2,7 @@
 """Fetch model files from Hugging Face into ComfyUI's models/ tree, by named set.
 
 Run inside the pod with the ComfyUI venv python (it has huggingface_hub):
-    HF_TOKEN=hf_... /workspace/runpod-slim/ComfyUI/.venv-cu128/bin/python fetch_models.py keyframe
+    HF_TOKEN=hf_... /workspace/runpod-slim/ComfyUI/.venv-cu128/bin/python fetch_models.py qwen   # or: keyframe (Phase 1 comparison set)
     ... fetch_models.py --list
 
 Idempotent: a file is skipped when the target already exists with the expected size.
@@ -18,7 +18,16 @@ from pathlib import Path
 
 MODELS = Path(os.environ.get("COMFY_MODELS", "/workspace/runpod-slim/ComfyUI/models"))
 
+QWEN21 = [
+    ("diffusion_models", "Comfy-Org/Qwen-Image-2.1", "diffusion_models/qwen_image_2.1_int8_convrot.safetensors", "Qwen Research License"),
+    ("text_encoders", "Comfy-Org/Qwen-Image-2.1", "text_encoders/qwen3vl_8b_int8_convrot.safetensors", "Qwen Research License"),
+    ("vae", "Comfy-Org/Qwen-Image-2.1", "vae/qwen_image_2.1_vae_bf16.safetensors", "Qwen Research License"),
+    ("loras", "Comfy-Org/Qwen-Image-2.1", "loras/p_q_image_2.1_8_steps_v0.1_comfyui_bf16.safetensors", "Qwen Research License"),
+]
+
 SETS: dict[str, list[tuple[str, str, str, str]]] = {
+    # The keyframe model in use since Phase 1c (mm.keyframes model "qwen21_8s"). Rebuilds only need this set.
+    "qwen": QWEN21,
     # Keyframe image-model comparison (Phase 1). Licenses checked 2026-11-07; non-commercial OK for this project.
     "keyframe": [
         ("checkpoints", "cagliostrolab/animagine-xl-4.0", "animagine-xl-4.0-opt.safetensors", "OpenRAIL++"),
@@ -27,10 +36,7 @@ SETS: dict[str, list[tuple[str, str, str, str]]] = {
         ("diffusion_models", "circlestone-labs/Anima", "split_files/diffusion_models/anima-turbo-v1.1.safetensors", "circlestone non-commercial"),
         ("text_encoders", "circlestone-labs/Anima", "split_files/text_encoders/qwen_3_06b_base.safetensors", "circlestone non-commercial"),
         ("vae", "circlestone-labs/Anima", "split_files/vae/qwen_image_vae.safetensors", "Qwen-Image VAE"),
-        ("diffusion_models", "Comfy-Org/Qwen-Image-2.1", "diffusion_models/qwen_image_2.1_int8_convrot.safetensors", "Qwen Research License"),
-        ("text_encoders", "Comfy-Org/Qwen-Image-2.1", "text_encoders/qwen3vl_8b_int8_convrot.safetensors", "Qwen Research License"),
-        ("vae", "Comfy-Org/Qwen-Image-2.1", "vae/qwen_image_2.1_vae_bf16.safetensors", "Qwen Research License"),
-        ("loras", "Comfy-Org/Qwen-Image-2.1", "loras/p_q_image_2.1_8_steps_v0.1_comfyui_bf16.safetensors", "Qwen Research License"),
+        *QWEN21,
     ],
 }
 

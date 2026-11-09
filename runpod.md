@@ -2,7 +2,7 @@
 
 The operations reference for the GPU pod that runs ComfyUI + LTX-2.5. Last updated 2026-11-09.
 
-> **Workflow (2026-11-08): the pod is created fresh each session and terminated at the end.** A stopped pod often can't restart because its host's GPU gets rented out, so it isn't worth keeping. Everything that matters lives on network volume `h70f1jyt5h`. To start a session, create a pod using §3. Then put its ID into `DEFAULT_URL` in `mm/comfy.py` (or set `$COMFY_URL`) and into the tables below. **Current pod: `9j9xlpgzacq74m`, created 2026-11-09.** Terminate it at the end of the session.
+> **Workflow (2026-11-09): nothing is kept on Runpod between sessions.** The pod is created fresh each session and terminated at the end. The network volume `h70f1jyt5h` was **deleted on 2026-11-09** to stop its ~$10.50/mo charge. **Next session: rebuild from scratch with §3b** (new volume, ComfyUI upgrade, model downloads, auth; ~45 min, ~$1). After that, §3 applies for the rest of that session. Put the new IDs into `DEFAULT_URL` in `mm/comfy.py` (or set `$COMFY_URL`) and into the tables below. **Right now no pod and no volume exist.** The IDs below belong to the last ones, now deleted.
 Phase plan: [PLAN.md](PLAN.md). Code: `mm/comfy.py` (API client), `infra/` (pod scripts), `workflows/` (ComfyUI API workflows).
 
 ---
@@ -11,8 +11,8 @@ Phase plan: [PLAN.md](PLAN.md). Code: `mm/comfy.py` (API client), `infra/` (pod 
 
 | What | Name / ID | Details | Cost |
 |---|---|---|---|
-| Pod | `ltx25-comfyui` / `9j9xlpgzacq74m` (created 2026-11-09; terminate at session end) | RTX 6000 Ada 48 GB, 16 vCPU, 62 GB RAM, Secure Cloud, US-WA-1, host CUDA 13.2 | **$0.99/hr while running** |
-| Network volume | `ltx25-models` / `h70f1jyt5h` | 150 GB STANDARD, US-WA-1, mounted at `/workspace` | ~$10.50/mo until deleted |
+| Pod | `ltx25-comfyui` / `9j9xlpgzacq74m` (**terminated 2026-11-09**; recreate via §3) | RTX 6000 Ada 48 GB, 16 vCPU, 62 GB RAM, Secure Cloud, US-WA-1, host CUDA 13.2 | **$0.99/hr while running** |
+| Network volume | `ltx25-models` / `h70f1jyt5h` (**deleted 2026-11-09**; recreate via §3b) | 150 GB STANDARD, US-WA-1, mounted at `/workspace` | ~$10.50/mo while it exists |
 | Unrelated older volume | `okay_blue_cicada` / `98olwtdp3d` | 10 GB, AP-JP-1, not used by this project | small; delete if not needed |
 
 | Service | Access | Auth |
@@ -68,6 +68,8 @@ ssh -p <port> root@195.26.233.15 'HF_TOKEN=hf_... bash /workspace/download_model
 
 ## 3. Rebuild on a new pod (same volume)
 
+> Needs an existing, set-up volume. With no volume (the default since 2026-11-09), use **§3b** first.
+
 Use this when the pod is lost, its GPU is gone, or you need another GPU type. Everything that matters is on volume `h70f1jyt5h`, so a new pod in **US-WA-1** comes up fully configured.
 
 1. Check stock in US-WA-1: MCP `list-gpu-types` with `include:["AVAILABILITY"]`, `product:["POD"]`. A network volume only attaches to Secure Cloud pods in its own data center.
@@ -90,6 +92,62 @@ Use this when the pod is lost, its GPU is gone, or you need another GPU type. Ev
 4. Update the pod ID and URLs in this file, and `DEFAULT_URL` in `mm/comfy.py`. Each new pod has a new ID, so it gets a new proxy URL.
 
 **Moving to another data center** means creating a new volume there and copying the data across. Alternatively, recreate it: run `download_models.sh --dev`, redo the ComfyUI upgrade (§4.3), then run `setup_auth.sh`.
+
+---
+
+## 3b. Rebuild from scratch (no volume)
+
+Everything the volume held can be rebuilt from this repo plus the local `.env` (`HF_TOKEN`, `COMFY_USER`, `COMFY_PASS`). Renders are downloaded to `renders/` as they finish, so none of them live only on the volume. Plan on **~45 min of pod time (~$0.75) and ~95 GB of downloads**.
+
+| What gets rebuilt | How |
+|---|---|
+| ComfyUI + venv under `/workspace/runpod-slim/` | The image's `/start.sh` creates it on first boot of an empty volume |
+| ComfyUI v0.44.2 (LTX-2.5 needs ≥ v0.32) | Step 4 (same commands as §4.3) |
+| LTX-2.5 weights + ComfyUI-LTXVideo nodes (~63 GB) | `infra/download_models.sh --dev` |
+| Qwen-Image-2.1 keyframe model + 8-step LoRA (~30 GB) | `infra/fetch_models.py qwen` |
+| Caddy basic auth, FileBrowser shim, `boot.sh` | `infra/pod/setup_auth.sh` |
+| Whisper ASR | Nothing to do: it runs on the laptop (see docs/phase1c.md) |
+
+1. **Pick a data center with stock *before* creating the volume.** Run MCP `list-gpu-types` with `include:["AVAILABILITY"]`, `product:["POD"]`, `minCudaVersion:"12.8"`. Use a data center that has RTX 6000 Ada ($0.99/hr) or L40S ($1.09/hr) on Secure Cloud. A volume only attaches to pods in its own data center, and an earlier volume had to be deleted after stock moved (§8).
+2. **Create the volume:** MCP `create-network-volume` `{"name": "ltx25-models", "size": 150, "dataCenterId": "<DC>"}`. This costs ~$10.50/mo while it exists; 120 GB is the practical minimum.
+3. **Create the pod without the auth wrapper and without exposing ComfyUI.** On an empty volume `boot.sh` doesn't exist yet, and ComfyUI would be open to the internet with no auth. Use the §3 body with these changes:
+   - set `dataCenterIds` to `["<DC>"]` and `volumeId` to the new volume;
+   - **drop** `entrypoint` and `cmd`;
+   - set `"ports": ["8888/http", "22/tcp"]` (no 8188).
+
+   Wait ~2–5 min for the first boot to set up ComfyUI. It's ready when `/workspace/runpod-slim/ComfyUI/.venv-cu128/bin/python` exists. To get a shell, use SSH (`get-pod` → `ssh.direct.command`; the key needs a loaded agent socket, see Gotchas) or the JupyterLab terminal.
+4. **Upgrade ComfyUI** (same as §4.3):
+   ```bash
+   cd /workspace/runpod-slim/ComfyUI && git fetch --tags && git checkout v0.44.2
+   .venv-cu128/bin/python -m pip install -r requirements.txt torch==2.10.0+cu128 torchvision==0.25.0+cu128
+   ```
+5. **Download the models.** Copy the scripts up from the laptop, then run them with the token on stdin so it never appears on a command line:
+   ```bash
+   # laptop
+   scp -P <port> infra/download_models.sh infra/fetch_models.py root@<ip>:/workspace/
+   scp -P <port> -r infra/pod root@<ip>:/workspace/infra-pod
+   # pod
+   read -rs HF_TOKEN && export HF_TOKEN          # paste HF_TOKEN from .env
+   bash /workspace/download_models.sh --dev       # LTX-2.5 distilled + dev int8, VAEs, upscalers, LTXVideo nodes
+   /workspace/runpod-slim/ComfyUI/.venv-cu128/bin/python /workspace/fetch_models.py qwen
+   ```
+   The `HF_TOKEN` account must have accepted the terms at https://huggingface.co/Lightricks/LTX-2.5.
+6. **Set up auth with the existing password from `.env`**, so the local client keeps working:
+   ```bash
+   # laptop: bcrypt hash of COMFY_PASS (prints only the hash)
+   python3 -c "import bcrypt,re; p=re.search(r'^COMFY_PASS=(.*)$', open('.env').read(), re.M).group(1).strip(); print(bcrypt.hashpw(p.encode(), bcrypt.gensalt(12)).decode())"
+   # pod
+   bash /workspace/infra-pod/setup_auth.sh '<hash>' comfy
+   ```
+7. **Switch to the normal boot.** Run MCP `update-pod` with `{"entrypoint": ["bash", "/workspace/runpod-slim/boot.sh"], "cmd": [], "ports": ["8188/http", "8888/http", "22/tcp"]}`. This resets the container, which takes ~30 s, and the SSH port changes.
+8. **Verify** (as in §3 step 3):
+   - `python3 -m mm.comfy stats` shows `comfyui_version` **0.44.2**;
+   - the proxy URL without credentials returns **401**;
+   - `python3 -m mm.comfy smoke` makes a clip;
+   - `python3 -m mm.keyframes styles --prompts prompts/rishi_apsara.json --styles epic_cg --shots 01_himalaya_establishing --out renders/keyframes_story/check` makes a keyframe.
+9. **Record the new IDs** for the volume, pod, proxy URL and SSH. Update them in §1 and in the §3 JSON (`volumeId`, `dataCenterIds`), and set `DEFAULT_URL` in `mm/comfy.py`.
+
+**Deleting the volume again at the end of a session:** terminate the pod first (MCP `delete-pod`), then run `delete-network-volume`. Both take effect immediately and can't be undone; billing stops at once. Before deleting, make sure every render you want is under `renders/` locally. Anything saved only on the pod (for example workflows saved from the ComfyUI web UI) is lost.
 
 ---
 
@@ -196,6 +254,8 @@ Browser / mm.comfy -> Runpod proxy (Cloudflare) -> Caddy :8188 (401 unless authe
 - **Later:** a serverless endpoint built `FROM runpod/worker-comfyui` on the same volume, a pinned image, and `ltx-pipelines` / `ltx-trainer` for LoRA training (Phase 2).
 
 ---
+
+- **2026-11-09: volume deleted.** At the user's request, `h70f1jyt5h` was deleted to stop its ~$10.50/mo charge between sessions. The next session rebuilds from scratch (§3b); everything on the volume can be reproduced from the repo and `.env`.
 
 ## 9. Agent tooling
 
