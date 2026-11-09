@@ -13,7 +13,7 @@ Phase plan: [PLAN.md](PLAN.md). Code: `mm/comfy.py` (API client), `infra/` (pod 
 |---|---|---|---|
 | Pod | `ltx25-comfyui` / `9j9xlpgzacq74m` (**terminated 2026-11-09**; recreate via §3) | RTX 6000 Ada 48 GB, 16 vCPU, 62 GB RAM, Secure Cloud, US-WA-1, host CUDA 13.2 | **$0.99/hr while running** |
 | Network volume | `ltx25-models` / `h70f1jyt5h` (**deleted 2026-11-09**; recreate via §3b) | 150 GB STANDARD, US-WA-1, mounted at `/workspace` | ~$10.50/mo while it exists |
-| Unrelated older volume | `okay_blue_cicada` / `98olwtdp3d` | 10 GB, AP-JP-1, not used by this project | small; delete if not needed |
+| Unrelated older volume | `okay_blue_cicada` / `98olwtdp3d` (**deleted 2026-11-09**) | 10 GB, AP-JP-1, not used by this project | — |
 
 | Service | Access | Auth |
 |---|---|---|
