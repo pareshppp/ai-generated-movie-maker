@@ -151,26 +151,37 @@ def library_test(categories: list[str], kf_model: str, kf_seed: int, seed: int, 
 
 
 def style_test(prompts: Path, kf_root: Path, kf_model: str, styles: list[str] | None, modes: list[str],
-               shot_ids: list[str] | None, seed: int, kf_seed: int, size: tuple[int, int], seconds: float) -> None:
-    """Same shots rendered per style (prompts file 'styles' block): I2V from that style's keyframe and/or T2V."""
+               shot_ids: list[str] | None, seeds: list[int], kf_seed: int, size: tuple[int, int], seconds: float,
+               name: str | None = None) -> None:
+    """Same shots rendered per style (prompts file 'styles' block): I2V from that style's keyframe and/or T2V.
+
+    Keyframe = the prompts file's optional "keyframe_picks" {style: {shot_id: path relative to kf_root}},
+    else kf_root/<kf_model>_<style>/<shot>_s<kf_seed>.png. One take per seed in `seeds`."""
     cfg = json.loads(prompts.read_text())
     styles = styles or list(cfg["styles"])
+    picks = cfg.get("keyframe_picks", {})
     variants = []
     for shot in cfg["shots"]:
         if shot_ids and shot["id"] not in shot_ids:
             continue
         for st in styles:
             sty = cfg["styles"][st]
-            spec = ClipSpec(prompt=sty["ltx_prefix"] + shot["motion"], negative=sty["ltx_negative"],
-                            width=size[0], height=size[1], seconds=seconds, seed=seed)
-            meta = {"shot": shot["id"], "style": st}
-            if "i2v" in modes:
-                kf = kf_root / f"{kf_model}_{st}" / f"{shot['id']}_s{kf_seed}.png"
-                variants.append((f"{shot['id']}__{st}__i2v", spec, {**meta, "mode": "i2v", "kf_model": kf_model,
-                                                                   "keyframe": str(kf)}))
-            if "t2v" in modes:
-                variants.append((f"{shot['id']}__{st}__t2v", spec, {**meta, "mode": "t2v"}))
-    run_variants(f"styles_{prompts.stem}_{'_'.join(modes)}", variants)
+            for seed in seeds:
+                neg = sty["ltx_negative"] + (f", {shot['ltx_negative_extra']}" if shot.get("ltx_negative_extra") else "")
+                spec = ClipSpec(prompt=sty["ltx_prefix"] + shot["motion"], negative=neg,
+                                width=size[0], height=size[1], seconds=seconds, seed=seed)
+                meta = {"shot": shot["id"], "style": st}
+                tag = f"__s{seed}" if len(seeds) > 1 else ""
+                if "i2v" in modes:
+                    pick = picks.get(st, {}).get(shot["id"])
+                    kf = kf_root / pick if pick else kf_root / f"{kf_model}_{st}" / f"{shot['id']}_s{kf_seed}.png"
+                    if not kf.exists():
+                        raise FileNotFoundError(kf)
+                    variants.append((f"{shot['id']}__{st}__i2v{tag}", spec,
+                                     {**meta, "mode": "i2v", "kf_model": kf_model, "keyframe": str(kf)}))
+                if "t2v" in modes:
+                    variants.append((f"{shot['id']}__{st}__t2v{tag}", spec, {**meta, "mode": "t2v"}))
+    run_variants(name or f"styles_{prompts.stem}_{'_'.join(modes)}", variants)
 
 
 def main(argv=None) -> int:
@@ -197,6 +208,8 @@ def main(argv=None) -> int:
     a4.add_argument("--shots", default="")
     a4.add_argument("--size", default="1280x720")
     a4.add_argument("--seconds", type=float, default=8.0)
+    a4.add_argument("--seeds", default="", help="comma list of LTX seeds, one take each (default: --seed)")
+    a4.add_argument("--name", default=None, help="output dir name under renders/exp")
     for sp in (a1, a2, a3, a4):
         sp.add_argument("--seed", type=int, default=42)
         sp.add_argument("--kf-seed", type=int, default=1001)
@@ -204,7 +217,8 @@ def main(argv=None) -> int:
     if a.cmd == "styles":
         w, h = map(int, a.size.lower().split("x"))
         style_test(a.prompts, a.kf_root, a.kf_model, [s for s in a.styles.split(",") if s], a.modes.split(","),
-                   [s for s in a.shots.split(",") if s], a.seed, a.kf_seed, (w, h), a.seconds)
+                   [s for s in a.shots.split(",") if s], [int(x) for x in a.seeds.split(",") if x] or [a.seed],
+                   a.kf_seed, (w, h), a.seconds, a.name)
     elif a.cmd == "t2v_vs_i2v":
         t2v_vs_i2v(a.kf_models.split(","), [s for s in a.shots.split(",") if s], a.seed, a.kf_seed)
     elif a.cmd == "sweep":

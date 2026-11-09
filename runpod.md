@@ -1,8 +1,8 @@
 # Runpod: LTX-2.5 ComfyUI pod
 
-The operations reference for the GPU pod that runs ComfyUI + LTX-2.5. Last updated 2026-11-08.
+The operations reference for the GPU pod that runs ComfyUI + LTX-2.5. Last updated 2026-11-09.
 
-> **Workflow (2026-11-08): the pod is created fresh each session and terminated at the end.** A stopped pod often can't restart because its host's GPU gets rented out, so it isn't worth keeping. Everything that matters lives on network volume `h70f1jyt5h`. To start a session, create a pod using §3. Then put its ID into `DEFAULT_URL` in `mm/comfy.py` (or set `$COMFY_URL`) and into the tables below. **Right now no pod exists.** The IDs below belong to the last pod, which has been terminated.
+> **Workflow (2026-11-08): the pod is created fresh each session and terminated at the end.** A stopped pod often can't restart because its host's GPU gets rented out, so it isn't worth keeping. Everything that matters lives on network volume `h70f1jyt5h`. To start a session, create a pod using §3. Then put its ID into `DEFAULT_URL` in `mm/comfy.py` (or set `$COMFY_URL`) and into the tables below. **Current pod: `9j9xlpgzacq74m`, created 2026-11-09.** Terminate it at the end of the session.
 Phase plan: [PLAN.md](PLAN.md). Code: `mm/comfy.py` (API client), `infra/` (pod scripts), `workflows/` (ComfyUI API workflows).
 
 ---
@@ -11,16 +11,16 @@ Phase plan: [PLAN.md](PLAN.md). Code: `mm/comfy.py` (API client), `infra/` (pod 
 
 | What | Name / ID | Details | Cost |
 |---|---|---|---|
-| Pod | `ltx25-comfyui` / `qxo2nouo34ye5y` (**terminated 2026-11-08**; recreate via §3) | RTX 6000 Ada 48 GB, 16 vCPU, 62 GB RAM, Secure Cloud, US-WA-1, host CUDA 13.2 | **$0.99/hr while running** |
+| Pod | `ltx25-comfyui` / `9j9xlpgzacq74m` (created 2026-11-09; terminate at session end) | RTX 6000 Ada 48 GB, 16 vCPU, 62 GB RAM, Secure Cloud, US-WA-1, host CUDA 13.2 | **$0.99/hr while running** |
 | Network volume | `ltx25-models` / `h70f1jyt5h` | 150 GB STANDARD, US-WA-1, mounted at `/workspace` | ~$10.50/mo until deleted |
 | Unrelated older volume | `okay_blue_cicada` / `98olwtdp3d` | 10 GB, AP-JP-1, not used by this project | small; delete if not needed |
 
 | Service | Access | Auth |
 |---|---|---|
-| ComfyUI (UI + API) | https://qxo2nouo34ye5y-8188.proxy.runpod.net | Basic auth: user `comfy`, password = `COMFY_PASS` in local `.env` |
-| JupyterLab | https://qxo2nouo34ye5y-8888.proxy.runpod.net | Token = pod env `JUPYTER_PASSWORD` (see console) |
-| SSH (direct; scp/rsync work) | `ssh root@195.26.233.33 -p <port>` | Account SSH key (`~/.ssh/id_ed25519`) |
-| SSH (proxy; shell only) | `ssh qxo2nouo34ye5y-64411392@ssh.runpod.io` | Same key |
+| ComfyUI (UI + API) | https://9j9xlpgzacq74m-8188.proxy.runpod.net | Basic auth: user `comfy`, password = `COMFY_PASS` in local `.env` |
+| JupyterLab | https://9j9xlpgzacq74m-8888.proxy.runpod.net | Token = pod env `JUPYTER_PASSWORD` (see console) |
+| SSH (direct; scp/rsync work) | `ssh root@195.26.233.15 -p 23806` | Account SSH key (`~/.ssh/id_ed25519`) |
+| SSH (proxy; shell only) | `ssh 9j9xlpgzacq74m-64411a07@ssh.runpod.io` | Same key |
 | FileBrowser | **disabled** | — |
 
 - **The SSH port changes on every container start, restart or reset.** Get the current one from the Runpod console, or with MCP `get-pod` (`ssh.direct.command`).
@@ -47,8 +47,8 @@ python -m mm.comfy run workflows/X_api.json   # any API-format workflow
 
 ### Add / re-download models
 ```bash
-scp -P <port> infra/download_models.sh root@195.26.233.33:/workspace/
-ssh -p <port> root@195.26.233.33 'HF_TOKEN=hf_... bash /workspace/download_models.sh [--dev] [--no-nodes]'
+scp -P <port> infra/download_models.sh root@195.26.233.15:/workspace/
+ssh -p <port> root@195.26.233.15 'HF_TOKEN=hf_... bash /workspace/download_models.sh [--dev] [--no-nodes]'
 ```
 - The script is idempotent: complete files are skipped.
 - The HF token needs the LTX-2.5 terms accepted at https://huggingface.co/Lightricks/LTX-2.5.
@@ -202,7 +202,7 @@ Browser / mm.comfy -> Runpod proxy (Cloudflare) -> Caddy :8188 (401 unless authe
 - Claude Code plugin `runpod@runpod` v2.0.0 (user scope), from marketplace `runpod/runpod-plugins-official`.
 - MCP server `https://mcp.runpod.io/` (OAuth). If it shows *Needs authentication*, run `/mcp` → runpod → **Sign in with Runpod**.
 - Useful MCP calls:
-  - `get-pod qxo2nouo34ye5y`: state, SSH port, port mappings.
+  - `get-pod 9j9xlpgzacq74m`: state, SSH port, port mappings.
   - `pod-action` with start, stop or restart.
   - `stream-pod-logs`: boot logs.
   - `list-gpu-types` with `include:["AVAILABILITY"]` and `product:["POD"]`: stock.

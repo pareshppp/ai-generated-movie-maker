@@ -2,13 +2,18 @@
   "_doc": "Reusable LTX-2.5 prompt fragments for anime I2V. A shot prompt = style + subject/scene (from the keyframe) + motion + camera + audio. Status per fragment: 'untested' | 'works' | 'weak' | 'fails' (updated from Phase 1 tests in docs/phase1.md). Tested 2026-11-07 at 960x544, 8 s, distilled, I2V from qwen21_8s keyframes (renders/exp/library_camera_motion_audio/).",
   "style": {
     "default": "Anime style, 2D cel animation, hand-drawn Japanese TV anime look, clean line art, flat cel shading.",
-    "limited_animation": "Anime style, 2D cel animation animated on twos, limited animation with held poses, clean line art, flat cel shading."
+    "limited_animation": "Anime style, 2D cel animation animated on twos, limited animation with held poses, clean line art, flat cel shading.",
+    "epic_cg": {
+      "text": "High-end realistic 3D CG animation, cinematic Indian mythological epic. ",
+      "status": "works",
+      "tested": "2026-11-09, 20 I2V clips from Qwen-Image epic_cg keyframes: style holds through motion, faces stay realistic (no cartoon drift)"
+    }
   },
   "camera": {
     "static": {
       "text": "Static camera, locked-off shot.",
       "status": "weak",
-      "tested": "still drifts forward; LTX defaults to a slow push"
+      "tested": "still drifts forward; LTX defaults to a slow push; 2026-11-09 epic CG: also ignored on face close-ups (09/10), still pushes in"
     },
     "push_in": {
       "text": "Slow push-in camera toward the subject.",
@@ -70,6 +75,17 @@
     "ambient_env": {
       "text": "Clouds drift slowly, leaves sway, light flickers gently; no people.",
       "status": "works"
+    },
+    "eyes_stay_closed": {
+      "text": "His eyes stay firmly closed the whole time in deep meditation, eyelids still.",
+      "status": "works",
+      "negative_extra": "eyes opening, open eyes, looking at camera, blinking",
+      "tested": "2026-11-09 shot 03: without it both takes opened the eyes in the last ~2 s; with text + negative_extra both takes kept them closed"
+    },
+    "fire_vfx": {
+      "text": "The mystical flames around him swirl and rise higher, sparks drift upward.",
+      "status": "works",
+      "tested": "2026-11-09 shots 01/02/04/10: fire columns, rings and an eruption stay coherent for 8 s; no flicker"
     }
   },
   "audio": {
@@ -103,10 +119,16 @@
       "text": "Quiet room tone, no music.",
       "status": "works",
       "tested": "-47 dB, quiet"
+    },
+    "quoted_dialogue_epic": {
+      "text": "He says in a deep, cold voice, \"<line>\".",
+      "status": "works",
+      "tested": "2026-11-09: 10/10 clips spoke the quoted line (Whisper match 0.75-1.0); two-speaker turn-taking in one shot correct in 2/2 takes"
     }
   },
   "negative": {
-    "default": "photorealistic, 3D render, CGI, live action, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
+    "default": "photorealistic, 3D render, CGI, live action, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles",
+    "epic_cg": "cartoon, Pixar, stylized, 2D, flat cel shading, sketch, photograph, live action, nudity, blurry, low quality, distorted face, deformed hands, extra limbs, flickering, jitter, watermark, text, subtitles"
   },
   "rules_of_thumb": [
     "Use I2V from a keyframe; T2V drifts off-style.",
@@ -114,6 +136,13 @@
     "Prefer 1280x720 for faces; 960x544 is fine for environments and drafts.",
     "One camera move per shot; one main action per character.",
     "LTX drifts forward by default; for a truly static shot, freeze/trim in edit or accept a slow push.",
-    "Walking/large body motion needs a wide keyframe; never animate a walk from an upper-body framing."
+    "Walking/large body motion needs a wide keyframe; never animate a walk from an upper-body framing.",
+    "Close-ups with closed eyes: LTX opens them over 8 s unless the prompt says they stay closed AND the negative lists 'eyes opening'.",
+    "Put dialogue in double quotes inside the motion prompt with the speaker named; LTX speaks it near-verbatim, including Sanskrit terms (tapas, tapasya, Om Namah Shivaya).",
+    "Per-clip loudness varies ~25 LU (wind-only shots very quiet, roars very loud): normalize per clip in the cut (mm.roughcut --lufs -16).",
+    "LTX pushes in on faces even when told 'static camera, fixed framing' (+ negative 'zoom in'); as the face grows it invents a different face. Not fixed by 864p. Trim before the drift, or anchor the end frame (multi-keyframe guide).",
+    "A character that crosses in front of another makes the occluded one vanish. Keep characters on their own side of the frame ('never crosses in front of').",
+    "Leave the keyframe room for the action: if the keyframe already shows the end state (fire touching the palace), LTX plays it backward or moves the scenery instead.",
+    "Big scenery doesn't stay put when something rises toward it: LTX moves the palace up/down. Use the first 2-3 s, or anchor first+last frames."
   ]
 }
